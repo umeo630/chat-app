@@ -1,7 +1,5 @@
-import { initializeFirebaseApp } from '@/lib/firebase/firebase'
 import { Providers } from './providers'
 
-initializeFirebaseApp()
 export default function RootLayout({
   children,
 }: {
