@@ -5,7 +5,12 @@ export default function Page() {
   return (
     <Box>
       <Heading>Home</Heading>
-      <Link href="/signup">Sign Up</Link>
+      <Box>
+        <Link href="/signup">Sign Up</Link>
+      </Box>
+      <Box>
+        <Link href="/signin">Sign In</Link>
+      </Box>
     </Box>
   )
 }
