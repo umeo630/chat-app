@@ -35,6 +35,8 @@ export default function Page() {
         title: 'ログインしました',
         status: 'success',
         position: 'top',
+        duration: 3000,
+        isClosable: true,
       })
       // TODO: ログイン後のページに遷移する
     } catch (error) {
@@ -42,6 +44,8 @@ export default function Page() {
         title: 'エラーが発生しました',
         status: 'error',
         position: 'top',
+        duration: 3000,
+        isClosable: true,
       })
       console.error(error)
     } finally {

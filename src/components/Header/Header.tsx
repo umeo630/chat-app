@@ -30,6 +30,8 @@ export const Header = () => {
         title: 'サインアウトしました',
         status: 'success',
         position: 'top',
+        duration: 3000,
+        isClosable: true,
       })
       push('/signin')
     } catch (error) {

@@ -41,6 +41,8 @@ export default function Page() {
         title: '確認メールを送信しました',
         status: 'success',
         position: 'top',
+        duration: 3000,
+        isClosable: true,
       })
       await sendEmailVerification(userCredential.user)
       setEmail('')
@@ -50,6 +52,8 @@ export default function Page() {
         title: 'エラーが発生しました',
         status: 'error',
         position: 'top',
+        duration: 3000,
+        isClosable: true,
       })
       console.error(error)
     } finally {
