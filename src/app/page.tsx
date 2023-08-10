@@ -12,6 +12,9 @@ export default function Page() {
       <Box>
         <Link href="/signin">Sign In</Link>
       </Box>
+      <Box>
+        <Link href="/chat">Chat</Link>
+      </Box>
     </AuthGuard>
   )
 }
