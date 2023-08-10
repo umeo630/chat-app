@@ -12,11 +12,8 @@ import {
   Text,
   chakra,
 } from '@chakra-ui/react'
-import { getDatabase, push, ref } from 'firebase/database'
-import { useState } from 'react'
-
-const _message = '確認用のメッセージです'
-const _messages = [...Array(10)].map((_, i) => _message.repeat(i + 1))
+import { getDatabase, onChildAdded, push, ref } from 'firebase/database'
+import { useEffect, useState } from 'react'
 
 type MessageProps = {
   message: string
@@ -50,13 +47,29 @@ export default function Page() {
       console.log(error)
     }
   }
+
+  const [chats, setChats] = useState<{ message: string }[]>([])
+
+  useEffect(() => {
+    try {
+      const db = getDatabase()
+      const dbRef = ref(db, 'chat')
+      return onChildAdded(dbRef, (snapshot) => {
+        const message = String(snapshot.val()['message'] ?? '')
+        setChats((prev) => [...prev, { message }])
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }, [])
+
   return (
     <Container py={14}>
       <Heading>チャット</Heading>
       <Spacer height={8} aria-hidden />
       <Flex direction={'column'} gap={2} overflowY={'auto'} height={400}>
-        {_messages.map((message, i) => (
-          <Message key={i} message={message} />
+        {chats.map((chat, i) => (
+          <Message key={i} message={chat.message} />
         ))}
       </Flex>
       <Spacer height={4} aria-hidden />
