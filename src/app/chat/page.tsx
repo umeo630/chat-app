@@ -1,5 +1,6 @@
 'use client'
 
+import { AuthGuard } from '@/feature/auth/component/AuthGuard'
 import {
   Avatar,
   Box,
@@ -64,26 +65,28 @@ export default function Page() {
   }, [])
 
   return (
-    <Container py={14}>
-      <Heading>チャット</Heading>
-      <Spacer height={8} aria-hidden />
-      <Flex direction={'column'} gap={2} overflowY={'auto'} height={400}>
-        {chats.map((chat, i) => (
-          <Message key={i} message={chat.message} />
-        ))}
-      </Flex>
-      <Spacer height={4} aria-hidden />
-      <chakra.form display={'flex'} gap={2} onSubmit={handleSendMessage}>
-        <Input
-          name="message"
-          type="text"
-          value={message}
-          onChange={(e) => {
-            setMessage(e.target.value)
-          }}
-        />
-        <Button type="submit">送信</Button>
-      </chakra.form>
-    </Container>
+    <AuthGuard>
+      <Container py={14}>
+        <Heading>チャット</Heading>
+        <Spacer height={8} aria-hidden />
+        <Flex direction={'column'} gap={2} overflowY={'auto'} height={400}>
+          {chats.map((chat, i) => (
+            <Message key={i} message={chat.message} />
+          ))}
+        </Flex>
+        <Spacer height={4} aria-hidden />
+        <chakra.form display={'flex'} gap={2} onSubmit={handleSendMessage}>
+          <Input
+            name="message"
+            type="text"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value)
+            }}
+          />
+          <Button type="submit">送信</Button>
+        </chakra.form>
+      </Container>
+    </AuthGuard>
   )
 }

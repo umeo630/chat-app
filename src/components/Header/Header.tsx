@@ -2,12 +2,17 @@
 
 import { useAuthContext } from '@/feature/auth/provider/AuthProvider'
 import {
-  Box,
+  Avatar,
   Button,
   Container,
+  Flex,
   Heading,
   Link,
-  Text,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Spacer,
   chakra,
   useToast,
 } from '@chakra-ui/react'
@@ -43,28 +48,27 @@ export const Header = () => {
 
   return (
     <chakra.header py={4} bgColor={'blue.400'}>
-      <Container
-        maxW={'container.lg'}
-        display={'flex'}
-        justifyContent={'space-between'}
-        alignItems={'center'}
-      >
-        <Heading color={'white'}>
-          <Link href={'/'}>Home</Link>
-        </Heading>
-        <Box textAlign={'right'}>
+      <Container maxW={'container.lg'}>
+        <Flex>
+          <Link href={'/'}>
+            <Heading color={'white'}>Chat</Heading>
+          </Link>
+          <Spacer aria-hidden />
           {user ? (
-            <Button
-              colorScheme={'teal'}
-              onClick={handleSignOut}
-              isLoading={isLoading}
-            >
-              サインアウト
-            </Button>
+            <Menu>
+              <MenuButton>
+                <Avatar flexShrink={0} width={10} height={10} />
+              </MenuButton>
+              <MenuList py={0}>
+                <MenuItem onClick={handleSignOut}>サインアウト</MenuItem>
+              </MenuList>
+            </Menu>
           ) : (
-            <Text color={'white'}>未ログイン</Text>
+            <Link href={'/signin'}>
+              <Button colorScheme={'teal'}>サインイン</Button>
+            </Link>
           )}
-        </Box>
+        </Flex>
       </Container>
     </chakra.header>
   )

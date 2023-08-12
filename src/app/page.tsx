@@ -1,10 +1,9 @@
 'use client' // クライアントサイドコンポーネントに変換
 
-import { AuthGuard } from '@/feature/auth/component/AuthGuard'
 import { Box, Heading, Link } from '@chakra-ui/react'
 export default function Page() {
   return (
-    <AuthGuard>
+    <Box>
       <Heading>Home</Heading>
       <Box>
         <Link href="/signup">Sign Up</Link>
@@ -15,6 +14,6 @@ export default function Page() {
       <Box>
         <Link href="/chat">Chat</Link>
       </Box>
-    </AuthGuard>
+    </Box>
   )
 }
