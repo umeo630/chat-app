@@ -1,6 +1,10 @@
+'use client'
+
 import { AuthProvider } from '@/feature/auth/provider/AuthProvider'
 import { Providers } from './providers'
 import { Header } from '@/components/Header/Header'
+import { Footer } from '@/components/Footer/Footer'
+import { Box } from '@chakra-ui/react'
 
 export default function RootLayout({
   children,
@@ -13,7 +17,8 @@ export default function RootLayout({
         <Providers>
           <AuthProvider>
             <Header />
-            {children}
+            <Box minHeight={'90vh'}>{children}</Box>
+            <Footer />
           </AuthProvider>
         </Providers>
       </body>
