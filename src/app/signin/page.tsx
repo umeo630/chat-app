@@ -15,6 +15,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function Page() {
@@ -22,6 +23,7 @@ export default function Page() {
   const [password, setPassword] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const toast = useToast()
+  const { push } = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true)
@@ -38,7 +40,7 @@ export default function Page() {
         duration: 3000,
         isClosable: true,
       })
-      // TODO: ログイン後のページに遷移する
+      push('/chat')
     } catch (error) {
       toast({
         title: 'エラーが発生しました',

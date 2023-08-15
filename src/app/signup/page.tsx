@@ -19,6 +19,7 @@ import {
   getAuth,
   sendEmailVerification,
 } from 'firebase/auth'
+import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 
 export default function Page() {
@@ -26,6 +27,7 @@ export default function Page() {
   const [password, setPassword] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const toast = useToast()
+  const { push } = useRouter()
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     setIsLoading(true)
@@ -47,6 +49,7 @@ export default function Page() {
       await sendEmailVerification(userCredential.user)
       setEmail('')
       setPassword('')
+      push('/chat')
     } catch (error) {
       toast({
         title: 'エラーが発生しました',
