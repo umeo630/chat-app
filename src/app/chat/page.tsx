@@ -14,7 +14,7 @@ import {
   chakra,
 } from '@chakra-ui/react'
 import { getDatabase, onChildAdded, push, ref } from 'firebase/database'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type MessageProps = {
   message: string
@@ -34,6 +34,7 @@ const Message = ({ message }: MessageProps) => {
 }
 
 export default function Page() {
+  const messageElementRef = useRef<HTMLDivElement | null>(null)
   const [message, setMessage] = useState<string>('')
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -64,12 +65,24 @@ export default function Page() {
     }
   }, [])
 
+  useEffect(() => {
+    messageElementRef.current?.scrollTo({
+      top: messageElementRef.current.scrollHeight,
+    })
+  }, [chats])
+
   return (
     <AuthGuard>
       <Container py={14}>
         <Heading>チャット</Heading>
         <Spacer height={8} aria-hidden />
-        <Flex direction={'column'} gap={2} overflowY={'auto'} height={400}>
+        <Flex
+          direction={'column'}
+          gap={2}
+          overflowY={'auto'}
+          height={400}
+          ref={messageElementRef}
+        >
           {chats.map((chat, i) => (
             <Message key={i} message={chat.message} />
           ))}
