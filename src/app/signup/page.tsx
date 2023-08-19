@@ -19,12 +19,14 @@ import {
   getAuth,
   sendEmailVerification,
 } from 'firebase/auth'
+import { getDatabase, ref, set } from 'firebase/database'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 
 export default function Page() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [username, setUsername] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const toast = useToast()
   const { push } = useRouter()
@@ -39,6 +41,14 @@ export default function Page() {
         email,
         password
       )
+      const db = getDatabase()
+      const userRef = ref(db, `users/${userCredential.user.uid}`)
+      await set(userRef, {
+        username: username,
+        email: email,
+        createdat: new Date().toISOString(),
+      })
+
       toast({
         title: '確認メールを送信しました',
         status: 'success',
@@ -90,6 +100,17 @@ export default function Page() {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value)
+                }}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>ユーザー名</FormLabel>
+              <Input
+                type={'text'}
+                name={'username'}
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value)
                 }}
               />
             </FormControl>
