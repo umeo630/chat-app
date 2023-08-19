@@ -18,16 +18,13 @@ import {
 } from '@chakra-ui/react'
 import { getAuth, signOut } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 export const Header = () => {
   const { user } = useAuthContext()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const toast = useToast()
   const { push } = useRouter()
 
   const handleSignOut = async () => {
-    setIsLoading(true)
     try {
       const auth = getAuth()
       await signOut(auth)
@@ -41,8 +38,6 @@ export const Header = () => {
       push('/signin')
     } catch (error) {
       console.log(error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -64,9 +59,14 @@ export const Header = () => {
               </MenuList>
             </Menu>
           ) : (
-            <Link href={'/signin'}>
-              <Button colorScheme={'teal'}>サインイン</Button>
-            </Link>
+            <Flex gap={2}>
+              <Link href={'/signin'}>
+                <Button colorScheme={'teal'}>サインイン</Button>
+              </Link>
+              <Link href={'/signup'}>
+                <Button colorScheme={'teal'}>サインアップ</Button>
+              </Link>
+            </Flex>
           )}
         </Flex>
       </Container>
