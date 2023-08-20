@@ -13,11 +13,14 @@ import {
   MenuItem,
   MenuList,
   Spacer,
+  Text,
   chakra,
   useToast,
 } from '@chakra-ui/react'
 import { getAuth, signOut } from 'firebase/auth'
+import { get, getDatabase, ref } from 'firebase/database'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export const Header = () => {
   const { user } = useAuthContext()
@@ -41,10 +44,23 @@ export const Header = () => {
     }
   }
 
+  const [username, setUsername] = useState<string>('')
+
+  useEffect(() => {
+    if (user) {
+      const db = getDatabase()
+      const userRef = ref(db, `users/${user.uid}`)
+      const snapshot = get(userRef)
+      snapshot.then((snapshot) => {
+        setUsername(snapshot.val()['username'])
+      })
+    }
+  }, [user])
+
   return (
     <chakra.header py={4} bgColor={'blue.400'}>
       <Container maxW={'container.lg'}>
-        <Flex>
+        <Flex alignItems={'center'}>
           <Link href={'/'}>
             <Heading color={'white'}>Chat</Heading>
           </Link>
@@ -57,6 +73,11 @@ export const Header = () => {
               <MenuList py={0}>
                 <MenuItem onClick={handleSignOut}>サインアウト</MenuItem>
               </MenuList>
+              {username && (
+                <Text ml={2} color={'white'}>
+                  {username}
+                </Text>
+              )}
             </Menu>
           ) : (
             <Flex gap={2}>
