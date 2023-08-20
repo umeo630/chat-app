@@ -1,5 +1,6 @@
 'use client'
 
+import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { AuthGuard } from '@/feature/auth/component/AuthGuard'
 import {
   Avatar,
@@ -73,33 +74,36 @@ export default function Page() {
 
   return (
     <AuthGuard>
-      <Container py={14}>
-        <Heading>チャット</Heading>
-        <Spacer height={8} aria-hidden />
-        <Flex
-          direction={'column'}
-          gap={2}
-          overflowY={'auto'}
-          height={400}
-          ref={messageElementRef}
-        >
-          {chats.map((chat, i) => (
-            <Message key={i} message={chat.message} />
-          ))}
-        </Flex>
-        <Spacer height={4} aria-hidden />
-        <chakra.form display={'flex'} gap={2} onSubmit={handleSendMessage}>
-          <Input
-            name="message"
-            type="text"
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value)
-            }}
-          />
-          <Button type="submit">送信</Button>
-        </chakra.form>
-      </Container>
+      <Flex>
+        <Sidebar />
+        <Container py={14}>
+          <Heading>チャット</Heading>
+          <Spacer height={8} aria-hidden />
+          <Flex
+            direction={'column'}
+            gap={2}
+            overflowY={'auto'}
+            height={'500'}
+            ref={messageElementRef}
+          >
+            {chats.map((chat, i) => (
+              <Message key={i} message={chat.message} />
+            ))}
+          </Flex>
+          <Spacer height={8} aria-hidden />
+          <chakra.form display={'flex'} gap={2} onSubmit={handleSendMessage}>
+            <Input
+              name="message"
+              type="text"
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value)
+              }}
+            />
+            <Button type="submit">送信</Button>
+          </chakra.form>
+        </Container>
+      </Flex>
     </AuthGuard>
   )
 }
