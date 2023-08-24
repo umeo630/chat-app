@@ -1,27 +1,28 @@
 'use client'
 
+import { User } from '@/feature/user/User'
+import { useUserContext } from '@/feature/user/provider/UserProvider'
 import { Heading, VStack, Avatar, Box, Text, Flex } from '@chakra-ui/react'
 import { get, getDatabase, ref } from 'firebase/database'
 import { useEffect, useState } from 'react'
 
 export const Sidebar = () => {
-  const [users, setUsers] = useState<
-    { id: string; username: string; profileImage: string }[]
-  >([])
+  const [users, setUsers] = useState<User[]>([])
+  const { setSelectedUser } = useUserContext()
 
   useEffect(() => {
     const db = getDatabase()
     const usersRef = ref(db, 'users')
     const snapshot = get(usersRef)
     snapshot.then((snapshot) => {
-      const userData = snapshot.val()
-      console.log(userData)
+      const data = snapshot.val()
+      console.log(data)
 
-      const users = Object.keys(userData).map((key) => ({
-        ...userData[key],
+      const userData = Object.keys(data).map((key) => ({
+        ...data[key],
         id: key,
       }))
-      setUsers(users)
+      setUsers(userData)
     })
   }, [])
 
@@ -33,8 +34,7 @@ export const Sidebar = () => {
       <VStack spacing={3} alignItems="start">
         {users.map((user) => (
           <Box
-            as="a"
-            href="#"
+            onClick={() => setSelectedUser(user)}
             style={{ textDecoration: 'none' }}
             _focus={{ boxShadow: 'none' }}
             w={'100%'}
