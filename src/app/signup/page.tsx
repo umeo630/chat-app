@@ -1,5 +1,6 @@
 'use client'
 
+import { ImageUploader } from '@/components/ImageUploader/ImageUploader'
 import {
   Box,
   Button,
@@ -113,6 +114,10 @@ export default function Page() {
                   setUsername(e.target.value)
                 }}
               />
+            </FormControl>
+            <FormControl>
+              <FormLabel>プロフィール画像</FormLabel>
+              <ImageUploader />
             </FormControl>
           </Box>
         </Grid>
