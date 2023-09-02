@@ -21,6 +21,7 @@ export const Sidebar = () => {
         id: key,
       }))
       setUsers(userData)
+      setSelectedUser(userData[0])
     })
   }, [])
 
