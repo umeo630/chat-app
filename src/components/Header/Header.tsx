@@ -18,7 +18,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { getAuth, signOut } from 'firebase/auth'
-import { get, getDatabase, ref } from 'firebase/database'
+import { get, getDatabase, onValue, ref } from 'firebase/database'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -50,10 +50,13 @@ export const Header = () => {
     if (user) {
       const db = getDatabase()
       const userRef = ref(db, `users/${user.uid}`)
-      const snapshot = get(userRef)
-      snapshot.then((snapshot) => {
-        setUsername(snapshot.val()['username'])
+      const unsubscribe = onValue(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+          setUsername(snapshot.val()['username'])
+        }
       })
+
+      return () => unsubscribe()
     }
   }, [user])
 
