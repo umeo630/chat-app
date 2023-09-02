@@ -21,6 +21,12 @@ import {
   sendEmailVerification,
 } from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+} from 'firebase/storage'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 
@@ -28,6 +34,7 @@ export default function Page() {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [username, setUsername] = useState<string>('')
+  const [profileImage, setProfileImage] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const toast = useToast()
   const { push } = useRouter()
@@ -42,11 +49,21 @@ export default function Page() {
         email,
         password
       )
+
+      let profileImageUrl = ''
+      if (profileImage) {
+        profileImageUrl = await uploadImageToFirebase(
+          profileImage,
+          userCredential.user.uid
+        )
+      }
+
       const db = getDatabase()
       const userRef = ref(db, `users/${userCredential.user.uid}`)
       await set(userRef, {
         username: username,
         email: email,
+        profileImageUrl,
         createdat: new Date().toISOString(),
       })
 
@@ -73,6 +90,13 @@ export default function Page() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const uploadImageToFirebase = async (file: File, userId: string) => {
+    const storage = getStorage()
+    const ref = storageRef(storage, `profileImages/${userId}`)
+    await uploadBytes(ref, file)
+    return getDownloadURL(ref)
   }
 
   return (
@@ -117,7 +141,7 @@ export default function Page() {
             </FormControl>
             <FormControl>
               <FormLabel>プロフィール画像</FormLabel>
-              <ImageUploader />
+              <ImageUploader onFileChange={setProfileImage} />
             </FormControl>
           </Box>
         </Grid>
