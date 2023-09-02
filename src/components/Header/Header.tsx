@@ -18,7 +18,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { getAuth, signOut } from 'firebase/auth'
-import { get, getDatabase, onValue, ref } from 'firebase/database'
+import { getDatabase, onValue, ref } from 'firebase/database'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -45,6 +45,7 @@ export const Header = () => {
   }
 
   const [username, setUsername] = useState<string>('')
+  const [profileImageUrl, setProfileImageUrl] = useState<string>('')
 
   useEffect(() => {
     if (user) {
@@ -53,6 +54,7 @@ export const Header = () => {
       const unsubscribe = onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
           setUsername(snapshot.val()['username'])
+          setProfileImageUrl(snapshot.val()['profileImageUrl'])
         }
       })
 
@@ -71,7 +73,12 @@ export const Header = () => {
           {user ? (
             <Menu>
               <MenuButton>
-                <Avatar flexShrink={0} width={10} height={10} />
+                <Avatar
+                  src={profileImageUrl || undefined}
+                  flexShrink={0}
+                  width={10}
+                  height={10}
+                />
               </MenuButton>
               <MenuList py={0}>
                 <MenuItem onClick={handleSignOut}>サインアウト</MenuItem>

@@ -16,8 +16,6 @@ export const Sidebar = () => {
     const snapshot = get(usersRef)
     snapshot.then((snapshot) => {
       const data = snapshot.val()
-      console.log(data)
-
       const userData = Object.keys(data).map((key) => ({
         ...data[key],
         id: key,
@@ -49,7 +47,7 @@ export const Sidebar = () => {
               cursor={'pointer'}
               _hover={{ bg: 'blue.400', color: 'white' }}
             >
-              <Avatar size="sm" />
+              <Avatar src={user.profileImageUrl || undefined} size="sm" />
               <Text ml={3}>{user.username}</Text>
             </Flex>
           </Box>
