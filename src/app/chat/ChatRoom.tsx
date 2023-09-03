@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Heading,
   Spacer,
   Flex,
   chakra,
@@ -11,52 +10,104 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'
-import { getDatabase, ref, push, onChildAdded } from 'firebase/database'
+import {
+  getDatabase,
+  ref,
+  push,
+  onChildAdded,
+  get,
+  orderByChild,
+  query,
+} from 'firebase/database'
 import { useRef, useState, useEffect } from 'react'
 import { Message } from './Message'
 import { useUserContext } from '@/feature/user/provider/UserProvider'
+import { useAuthContext } from '@/feature/auth/provider/AuthProvider'
 
 export const ChatRoom = () => {
   const messageElementRef = useRef<HTMLDivElement | null>(null)
+  const { user } = useAuthContext()
   const [message, setMessage] = useState<string>('')
-  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const { selectedUser } = useUserContext()
+  const [chats, setChats] = useState<
+    {
+      sendername: string
+      senderImageUrl: string
+      message: string
+      createdAt: string
+    }[]
+  >([])
+  const generateChatId = (currentUserId: string, selectedUserId: string) => {
+    const sortedIds = [currentUserId, selectedUserId].sort()
+    return sortedIds.join('_')
+  }
+
+  const searchUser = async (userId: string) => {
     try {
       const db = getDatabase()
-      const dbRef = ref(db, 'chat')
-      await push(dbRef, {
-        message,
-      })
-      setMessage('')
+      const dbRef = ref(db, `users/${userId}`)
+      const snapshot = await get(dbRef)
+      return snapshot.val()
     } catch (error) {
       console.log(error)
     }
   }
 
-  const [chats, setChats] = useState<{ message: string; createdAt: string }[]>(
-    []
-  )
-
-  useEffect(() => {
+  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     try {
       const db = getDatabase()
-      const dbRef = ref(db, 'chat')
-      return onChildAdded(dbRef, (snapshot) => {
+      const chatId = generateChatId(user?.uid ?? '', selectedUser?.id ?? '')
+      const dbRef = ref(db, `chat/${chatId}`)
+      await push(dbRef, {
+        message,
+        senderId: user?.uid,
+        receiverId: selectedUser?.id,
+        createdAt: new Date().toISOString(),
+      })
+      setMessage('')
+      fetchChats()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchChats = async () => {
+    try {
+      setChats([])
+      const db = getDatabase()
+      const chatId = generateChatId(user?.uid ?? '', selectedUser?.id ?? '')
+      const dbRef = query(ref(db, `chat/${chatId}`), orderByChild('createdAt'))
+      return onChildAdded(dbRef, async (snapshot) => {
         const message = String(snapshot.val()['message'] ?? '')
-        setChats((prev) => [...prev, { message, createdAt: '2021-09-01' }])
+        const createdAt = String(snapshot.val()['createdAt'] ?? '')
+        const sender = await searchUser(
+          String(snapshot.val()['senderId'] ?? '')
+        )
+
+        const sendername = sender.username
+        const senderImageUrl = sender.profileImageUrl ?? ''
+
+        setChats((prev) => [
+          ...prev,
+          { sendername, senderImageUrl, message, createdAt },
+        ])
       })
     } catch (error) {
       console.log(error)
     }
-  }, [])
+  }
+
+  useEffect(() => {
+    fetchChats()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedUser?.id])
 
   useEffect(() => {
     messageElementRef.current?.scrollTo({
       top: messageElementRef.current.scrollHeight,
     })
   }, [chats])
-
-  const { selectedUser } = useUserContext()
 
   return (
     <Box w={'100%'} h={'100%'}>
@@ -82,7 +133,8 @@ export const ChatRoom = () => {
           {chats.map((chat, i) => (
             <Message
               key={i}
-              username="user"
+              profileImageUrl={chat.senderImageUrl}
+              username={chat.sendername}
               message={chat.message}
               createdAt={chat.createdAt}
             />
