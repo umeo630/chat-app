@@ -63,7 +63,7 @@ export const ChatRoom = () => {
         message,
         senderId: user?.uid,
         receiverId: selectedUser?.id,
-        createdAt: new Date().toISOString(),
+        createdAt: new Date().toLocaleString(),
       })
       setMessage('')
       fetchChats()
@@ -77,21 +77,25 @@ export const ChatRoom = () => {
       setChats([])
       const db = getDatabase()
       const chatId = generateChatId(user?.uid ?? '', selectedUser?.id ?? '')
-      const dbRef = query(ref(db, `chat/${chatId}`), orderByChild('createdAt'))
+      const dbRef = ref(db, `chat/${chatId}`)
+
       return onChildAdded(dbRef, async (snapshot) => {
-        const message = String(snapshot.val()['message'] ?? '')
-        const createdAt = String(snapshot.val()['createdAt'] ?? '')
-        const sender = await searchUser(
-          String(snapshot.val()['senderId'] ?? '')
-        )
+        const data = snapshot.val()
+        const senderData = await searchUser(data.senderId ?? '')
 
-        const sendername = sender.username
-        const senderImageUrl = sender.profileImageUrl ?? ''
+        const newChat = {
+          sendername: senderData.username,
+          senderImageUrl: senderData.profileImageUrl ?? '',
+          message: data.message ?? '',
+          createdAt: data.createdAt ?? '',
+        }
 
-        setChats((prev) => [
-          ...prev,
-          { sendername, senderImageUrl, message, createdAt },
-        ])
+        setChats((prevChats) => {
+          const updatedChats = [...prevChats, newChat]
+          return updatedChats.sort((a, b) => {
+            return a.createdAt > b.createdAt ? 1 : -1
+          })
+        })
       })
     } catch (error) {
       console.log(error)

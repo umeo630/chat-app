@@ -64,7 +64,7 @@ export default function Page() {
         username: username,
         email: email,
         profileImageUrl,
-        createdat: new Date().toISOString(),
+        createdat: new Date().toLocaleString(),
       })
 
       toast({
