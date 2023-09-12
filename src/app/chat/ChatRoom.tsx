@@ -10,15 +10,7 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'
-import {
-  getDatabase,
-  ref,
-  push,
-  onChildAdded,
-  get,
-  orderByChild,
-  query,
-} from 'firebase/database'
+import { getDatabase, ref, push, onChildAdded, get } from 'firebase/database'
 import { useRef, useState, useEffect } from 'react'
 import { Message } from './Message'
 import { useUserContext } from '@/feature/user/provider/UserProvider'
@@ -91,8 +83,9 @@ export const ChatRoom = () => {
 
         setChats((prevChats) => {
           const updatedChats = [...prevChats, newChat]
+          // 降順に並び替え
           return updatedChats.sort((a, b) => {
-            return a.createdAt > b.createdAt ? 1 : -1
+            return new Date(a.createdAt) < new Date(b.createdAt) ? -1 : 1
           })
         })
       })
