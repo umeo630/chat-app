@@ -66,7 +66,6 @@ export const ChatRoom = () => {
         createdAt: new Date().toLocaleString(),
       })
       setMessage('')
-      fetchChats()
     } catch (error) {
       console.log(error)
     }
