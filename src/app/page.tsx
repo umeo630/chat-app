@@ -1,19 +1,20 @@
-'use client' // クライアントサイドコンポーネントに変換
+'use client'
 
-import { Box, Heading, Link } from '@chakra-ui/react'
+import { Sidebar } from '@/app/chat/Sidebar'
+import { AuthGuard } from '@/feature/auth/component/AuthGuard'
+import { UserProvider } from '@/feature/user/provider/UserProvider'
+import { Flex } from '@chakra-ui/react'
+import { ChatRoom } from './chat/ChatRoom'
+
 export default function Page() {
   return (
-    <Box>
-      <Heading>Home</Heading>
-      <Box>
-        <Link href="/signup">Sign Up</Link>
-      </Box>
-      <Box>
-        <Link href="/signin">Sign In</Link>
-      </Box>
-      <Box>
-        <Link href="/chat">Chat</Link>
-      </Box>
-    </Box>
+    <AuthGuard>
+      <UserProvider>
+        <Flex>
+          <Sidebar />
+          <ChatRoom />
+        </Flex>
+      </UserProvider>
+    </AuthGuard>
   )
 }

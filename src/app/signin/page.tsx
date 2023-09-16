@@ -40,7 +40,7 @@ export default function Page() {
         duration: 3000,
         isClosable: true,
       })
-      push('/chat')
+      push('/')
     } catch (error) {
       toast({
         title: 'エラーが発生しました',
